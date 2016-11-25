@@ -124,6 +124,9 @@
 #    If this value is `true` on a system that does not support rfc2307bis, a catalog error will be generated.
 #    (Default: false)
 #
+#  [*ldap_packages*]
+#    Array of packages installed when LDAP support is enabled.
+#    (Default: depends on OS version)
 # === Authors
 #
 # Yanis Guenane <yguenane@gmail.com>
@@ -171,6 +174,8 @@ class authconfig (
   $smartcaction   = false,
   $smartcrequire  = false,
   $rfc2307bis     = false,
+  $ldap_packages  = $authconfig::params::ldap_packages,
+
 ) inherits authconfig::params {
 
   case $::osfamily {
@@ -523,7 +528,7 @@ class authconfig (
           require    => Exec['authconfig command'],
         }
       } elsif $ldap {
-        package { $authconfig::params::ldap_packages:
+        package { $ldap_packages:
           ensure => installed,
         } ->
         service { $authconfig::params::ldap_services:
